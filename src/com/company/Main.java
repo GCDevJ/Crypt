@@ -6,33 +6,27 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static java.lang.System.out;
+
 public class Main {
 
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-        File InputFile = new File("in.txt");
-        File OutputFile = new File("out.txt");
-        String inputString = "test";
+        File InputFile = new File("./res/in.txt");
+        File DecodeFile = new File("./res/out.txt");
 
         Symmetric symTest = new Symmetric();
-        System.out.println("\nSymmetric \n\nEncode:");
-        //Encode
-        String text = symTest.encryptText(inputString);
-        System.out.println(text);
-        //Decode
-        System.out.println("\nDecode:");
-        text = symTest.decriptText(text);
-        System.out.println(text);
-        decodeFile(readFile(InputFile), symTest);
 
+        encodeFile(readFile(InputFile), symTest);
+        decodeFile(readFile(DecodeFile), symTest);
     }
 
     public static List<String> readFile(File file) throws FileNotFoundException {
@@ -40,15 +34,52 @@ public class Main {
         Scanner FileScanner = new Scanner(file);
 
         while (FileScanner.hasNext()){FileText.add(FileScanner.nextLine());}
-
+        FileScanner.close();
         return FileText;
     }
 
-    public static void decodeFile(List<String> FileTextList, Symmetric symTest) throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-        FileWriter writer = new FileWriter("./out.txt");
-        for (int i = 0; i < FileTextList.size(); i++) {
-            writer.write(symTest.encryptText(FileTextList.get(i)));
+    public static void encodeFile(List<String> FileTextList, Symmetric symTest) throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
+        out.println("encoding.....");
+       PrintWriter writer = null;
+
+        List<String> output = new ArrayList<>();
+
+        for (String s : FileTextList)
+            output.add(symTest.encryptText(s));
+
+        try {
+            writer = new PrintWriter("res/out.txt");
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
         }
+        assert writer != null;
+        for (String string : output){
+            writer.println(string);
+        }
+        writer.close();
+        out.println("completely encoded!");
     }
 
+    public static void decodeFile(List<String> FileTextList, Symmetric symTest) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
+        out.println("decoding......");
+        PrintWriter writer = null;
+
+        List<String> output = new ArrayList<>();
+
+        for (String s : FileTextList)
+            output.add(symTest.decriptText(s));
+
+        try {
+            writer = new PrintWriter("./res/outDecoded.txt");
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        assert writer != null;
+        for (String string : output){
+            writer.println(string);
+        }
+        writer.close();
+        out.println("completely decoded!");
+
+    }
 }
