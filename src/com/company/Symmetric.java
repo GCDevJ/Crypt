@@ -2,10 +2,16 @@ package com.company;
 
 import javax.crypto.*;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+/*
+ * The Class
+ *
+ * */
 public class Symmetric {
+    //Attributes
     private SecretKey secKey = KeyGenerator.getInstance("AES").generateKey();
     private Cipher c = Cipher.getInstance("AES");
 
@@ -15,7 +21,7 @@ public class Symmetric {
 
 
     public String encryptText(String inputString) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
-        byte [] input = inputString.getBytes("UTF8");
+        byte[] input = inputString.getBytes(StandardCharsets.UTF_8);
         c.init(Cipher.ENCRYPT_MODE, secKey);
         byte[] encrypted = c.doFinal(input);
         String encryptedText =  java.util.Base64.getEncoder().encodeToString(encrypted);
